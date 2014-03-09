@@ -12,7 +12,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "user_tasks.h"		 
+#include "user_tasks.h"	
+#include "lcd.h"
 
 /*-----------------------------------------------------------*/
 
@@ -32,6 +33,8 @@
 char * pcUsartTaskStartMsg = "USART task started.\r\n";
 static xSemaphoreHandle xButtonSpeedUpSemaphore;//按键信号
 xQueueHandle RxQueue, TxQueue;//串行口发送/接收队列 
+uint8_t u8LCDFrameBuffer[LCD_X*LCD_Y/8];//LCD 显示缓冲区
+
 
 /**
  * @brief  LED3闪烁任务：每隔500ms切换LED3的显示状态.
@@ -46,7 +49,7 @@ static void prvLED3BlinkTask(void *pvParameters)
         for(;;)
         {				
                 //STM_EVAL_LEDToggle(LED3);
-                GPIOC->ODR ^= GPIO_Pin_9;
+                GPIOC->ODR ^= (GPIO_Pin_8 | GPIO_Pin_9);
                 vTaskDelayUntil(&xNextWakeTime, xFrequency);
         }
 }
@@ -172,42 +175,43 @@ void  USART1PutString(const char *const pcString, uint32_t u32StringLength)
 
 
 
-///**
-//  * @brief  LCD任务：每隔500ms清屏并显示固定字符串“Hello World！”.
-//  * @param  pvParameters:任务默认参数.
-//  * @retval 无
-//  */
-//static void prvLCDTask(void *pvParameters)
-//{
-//	uint8_t lcd_row = 0;
-//	portTickType xLastWakeTime;
-//	const portTickType xFrequency = 500;
-//	xLastWakeTime=xTaskGetTickCount();
-//	/* 初始化LCD */
-//	LCD_Init();
-//	/* 清除显示缓冲区 */
-//	LCD_Clear();
-//	/* 将数据写入显示缓冲区 */
-//	LCD_WriteString(0, 0, "Hello World!");
-//	/* 刷新LCD */
-//	for(;;)
-//	{
-//		if(DMA_GetCurrDataCounter(DMA1_Channel5) == 0)
-//		{
-//			LCD_Send((uint32_t)(u8LCDFrameBuffer + lcd_row * LCD_X), LCD_X);
-////			vTaskDelay(lcdPUT_DATA_DELAY);
-//			if(lcd_row == LCD_Y/8 - 1)
-//				lcd_row = 0;
-//			else
-//				lcd_row += 1;
-//		}
-//		if(lcd_row == 0)
-//			vTaskDelayUntil(&xLastWakeTime,xFrequency);
-//	}		
-//}
+/**
+  * @brief  LCD任务：每隔500ms清屏并显示固定字符串“Hello World！”.
+  * @param  pvParameters:任务默认参数.
+  * @retval 无
+  */
+static void prvLCDTask(void *pvParameters)
+{
+	uint8_t lcd_row = 0;
+	portTickType xLastWakeTime;
+	const portTickType xFrequency = 500;
+	xLastWakeTime=xTaskGetTickCount();
+	/* 初始化LCD */
+	LCD_Init();
+	/* 清除显示缓冲区 */
+	LCD_Clear();
+	/* 将数据写入显示缓冲区 */
+	LCD_WriteString(0, 0, "Hello World!");
+	/* 刷新LCD */
+	for(;;)
+	{
+		if (DMA_GetCurrDataCounter(DMA1_Channel5) == 0) {
+			LCD_Send((uint32_t)(u8LCDFrameBuffer + lcd_row * LCD_X), LCD_X);
+//			vTaskDelay(lcdPUT_DATA_DELAY);
+			if(lcd_row == LCD_Y/8 - 1)
+				lcd_row = 0;
+			else
+				lcd_row += 1;
+		}
+		
+		if (lcd_row == 0) {
+			vTaskDelayUntil(&xLastWakeTime,xFrequency);
+		}
+	}		
+}
 
-/*-----------------------------------------------------------*/
 
+//=========================================================================================================
 /**
  * @brief  创建所有任务.
  * @param  无
@@ -217,7 +221,7 @@ void prvUserTasks(void)
 {
         /* 创建任务 */
         xTaskCreate(prvLED3BlinkTask,			//任务函数
-                        ( char *) "LED3 BLINK",   //任务名称
+                        ( char *) "LED3 BLINK",   	//任务名称
                         configMINIMAL_STACK_SIZE, 	//任务堆栈
                         NULL, 				//任务参数
                         mainLED3_BLINK_TASK_PRIORITY,	//任务优先级 
@@ -237,12 +241,12 @@ void prvUserTasks(void)
                         mainUSART1_TASK_PRIORITY,
                         NULL);
 
-        //	xTaskCreate(prvLCDTask,
-        //			(signed char *) "LCD",
-        //			configMINIMAL_STACK_SIZE,
-        //			NULL,
-        //			mainLCD_TASK_PRIORITY,
-        //			NULL);		
+	xTaskCreate(prvLCDTask,
+			( char *) "LCD",
+			configMINIMAL_STACK_SIZE,
+			NULL,
+			mainLCD_TASK_PRIORITY,
+			NULL);		
 
         /* 启动任务调度器 */
         vTaskStartScheduler();

@@ -772,8 +772,8 @@ TCB_t * pxNewTCB;
 
 	void vTaskDelayUntil( TickType_t * const pxPreviousWakeTime, const TickType_t xTimeIncrement )
 	{
-	TickType_t xTimeToWake;
-	BaseType_t xAlreadyYielded, xShouldDelay = pdFALSE;
+		TickType_t xTimeToWake;
+		BaseType_t xAlreadyYielded, xShouldDelay = pdFALSE;
 
 		configASSERT( pxPreviousWakeTime );
 		configASSERT( ( xTimeIncrement > 0U ) );
@@ -868,8 +868,8 @@ TCB_t * pxNewTCB;
 
 	void vTaskDelay( const TickType_t xTicksToDelay )
 	{
-	TickType_t xTimeToWake;
-	BaseType_t xAlreadyYielded = pdFALSE;
+		TickType_t xTimeToWake;
+		BaseType_t xAlreadyYielded = pdFALSE;
 
 
 		/* A delay time of zero just forces a reschedule. */

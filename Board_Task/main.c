@@ -2,13 +2,13 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "stm32f0xx.h"                  // Device header
+#include "lcd.h"
 
+static void prvSetupHardware(void);	// 硬件初始化函数
+extern void prvUserTasks(void);		// LED闪烁任务文件
 
-static void prvSetupHardware(void);//硬件初始化函数
-extern void prvUserTasks(void);//LED闪烁任务文件
-
-/*-----------------------------------------------------------*/
-
+//=========================================================================================================
+// 主函数
 int main(void)
 {
 	/* 初始化STM32F0XX Discovery硬件系统 */
@@ -17,8 +17,9 @@ int main(void)
 	prvUserTasks();
 	return 0;
 }
-/*-----------------------------------------------------------*/
 
+//=========================================================================================================
+// 
 static void prvSetupHardware( void )
 {
 	GPIO_InitTypeDef  	GPIO_InitStructure;
@@ -27,16 +28,7 @@ static void prvSetupHardware( void )
 	SPI_InitTypeDef 	SPI_InitStructure;
 	DMA_InitTypeDef 	DMA_InitStructure;	
 	
-	/*
-	 * 系统时钟初始化 
-	 * 系统所使用的模块：
-	 * GPIOA
-	 * GPIOB
-	 * GPIOC
-	 * USART1
-	 * SPI2
-	 * DMA1
-	 */
+
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2, ENABLE);	//SPI2模块时钟
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);  //USART1模块时钟	
 	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1 | 		//DMA1模块时钟
@@ -48,10 +40,10 @@ static void prvSetupHardware( void )
 	 * LED GPIO初始化
 	 * GPIOC：PC9控制LED3
 	 */	 
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;//PC9用于LED控制	 
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
+	GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_8 | GPIO_Pin_9;	 
+	GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_OUT;
 	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+	GPIO_InitStructure.GPIO_PuPd  = GPIO_PuPd_NOPULL;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_Init(GPIOC, &GPIO_InitStructure);
 	
@@ -59,7 +51,7 @@ static void prvSetupHardware( void )
 	 * 按键初始化
 	 * GPIOA：PA0用于控制按键
 	 */
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;//PA0用于按键
+	GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_0;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);	
 
@@ -68,28 +60,28 @@ static void prvSetupHardware( void )
 	 */
 	 
 	/* GPIO初始化：GPIOA：PA8用于USART1_Tx；PA9用于USART1_Rx */	
-	GPIO_PinAFConfig(GPIOA, GPIO_PinSource9, GPIO_AF_1);//PA9-USART1_Tx 
-	GPIO_PinAFConfig(GPIOA, GPIO_PinSource10, GPIO_AF_1);//PA10-USART1_Rx 
+	GPIO_PinAFConfig(GPIOA, GPIO_PinSource9, GPIO_AF_1);		// PA9-USART1_Tx 
+	GPIO_PinAFConfig(GPIOA, GPIO_PinSource10, GPIO_AF_1);		// PA10-USART1_Rx 
 
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9 | GPIO_Pin_10;//PA9端口为USART1_Tx
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;//使用备用功能
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;//端口速度50MHz
-	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;//推挽输出
-	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;//开启上拉电阻
-	GPIO_Init(GPIOA, &GPIO_InitStructure);//初始化GPIO	
+	GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_9 | GPIO_Pin_10;	// PA9端口为USART1_Tx
+	GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_AF;			// 使用备用功能
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;		// 端口速度50MHz
+	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;			// 推挽输出
+	GPIO_InitStructure.GPIO_PuPd  = GPIO_PuPd_UP;			// 开启上拉电阻
+	GPIO_Init(GPIOA, &GPIO_InitStructure);				// 初始化GPIO	
 	
 	/* USART1模块初始化 */
-	USART_InitStructure.USART_BaudRate = 9600;//波特率9600
-	USART_InitStructure.USART_WordLength = USART_WordLength_8b;//8位数据
-	USART_InitStructure.USART_StopBits = USART_StopBits_1;//1位停止位
-	USART_InitStructure.USART_Parity = USART_Parity_No;//无校验位
+	USART_InitStructure.USART_BaudRate   = 9600;			// 波特率9600
+	USART_InitStructure.USART_WordLength = USART_WordLength_8b;	// 8位数据
+	USART_InitStructure.USART_StopBits   = USART_StopBits_1;	// 1位停止位
+	USART_InitStructure.USART_Parity     = USART_Parity_No;		// 无校验位
 	USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;//无硬件流控制
-	USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;//启用发送与接收
-	USART_Init(USART1, &USART_InitStructure);//初始化USART1模块
+	USART_InitStructure.USART_Mode       = USART_Mode_Rx | USART_Mode_Tx;//启用发送与接收
+	USART_Init(USART1, &USART_InitStructure);			// 初始化USART1模块
 	USART_Cmd(USART1, ENABLE);//使能USART1模块
 	USART_DMACmd(USART1, (USART_DMAReq_Tx | USART_DMAReq_Rx), ENABLE);//使能DMA传输
-	USART_ITConfig(USART1, USART_IT_TXE, DISABLE);//禁用USART1发送中断
-	USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);//使能USART1接收中断	
+	USART_ITConfig(USART1, USART_IT_TXE, DISABLE);			// 禁用USART1发送中断
+	USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);			// 使能USART1接收中断	
 	
 	/*
 	 * LCD5110初始化：LCD5110采用SPI+DMA传输方式
@@ -99,11 +91,11 @@ static void prvSetupHardware( void )
 	GPIO_PinAFConfig(GPIOB, GPIO_PinSource13, GPIO_AF_0);//PB13-SPI SCLK
 	GPIO_PinAFConfig(GPIOB, GPIO_PinSource15, GPIO_AF_0);//PB15-SPI MOSI
 	
-	GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_13 | GPIO_Pin_15;//PB13和PB15用于SPI通讯
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;//选用端口的备用(SPI Port)
+	GPIO_InitStructure.GPIO_Pin   =  GPIO_Pin_13 | GPIO_Pin_15;//PB13和PB15用于SPI通讯
+	GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_AF;//选用端口的备用(SPI Port)
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;//端口速度50MHz
 	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;//推挽输出
-	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;//开启上拉电阻
+	GPIO_InitStructure.GPIO_PuPd  = GPIO_PuPd_UP;//开启上拉电阻
 	GPIO_Init(GPIOB, &GPIO_InitStructure);	
 	
 	/* 配置SPI2模块 */
@@ -148,7 +140,7 @@ static void prvSetupHardware( void )
 	GPIO_Init(GPIOC, &GPIO_InitStructure);//初始化GPIO	
 	
 //	/* LCD初始化 */
-//	LCD_Init();
+	LCD_Init();
 	
 	/* 
 	 * 系统中断初始化 
@@ -160,8 +152,9 @@ static void prvSetupHardware( void )
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);	
 }
-/*-----------------------------------------------------------*/
 
+
+//=========================================================================================================
 void vApplicationMallocFailedHook(void)
 {
 	/* 
@@ -177,8 +170,8 @@ void vApplicationMallocFailedHook(void)
 	taskDISABLE_INTERRUPTS();//禁用所有可屏蔽的中断
 	for( ;; );
 }
-/*-----------------------------------------------------------*/
 
+//=========================================================================================================
 void vApplicationIdleHook(void)
 {
 	/* 
@@ -189,8 +182,8 @@ void vApplicationIdleHook(void)
 	 这时因为空闲任务一般用来清理内核分配给已删除任务的存储空间。
 	*/
 }
-/*-----------------------------------------------------------*/
 
+//=========================================================================================================
 void vApplicationStackOverflowHook(xTaskHandle pxTask, signed char *pcTaskName)
 {
 	( void ) pcTaskName;
@@ -204,8 +197,8 @@ void vApplicationStackOverflowHook(xTaskHandle pxTask, signed char *pcTaskName)
 	taskDISABLE_INTERRUPTS();//禁用所有可屏蔽中断
 	for( ;; );
 }
-/*-----------------------------------------------------------*/
 
+//=========================================================================================================
 void vApplicationTickHook(void)
 {
 	/* 
@@ -215,13 +208,13 @@ void vApplicationTickHook(void)
 	执行，而且只能使用中断安全的API函数。
 	*/
 }
-/*-----------------------------------------------------------*/
 
+//=========================================================================================================
 #ifdef JUST_AN_EXAMPLE_ISR
 
 void Dummy_IRQHandler(void)
 {
-long lHigherPriorityTaskWoken = pdFALSE;
+	long lHigherPriorityTaskWoken = pdFALSE;
 
 	/* Clear the interrupt if necessary. */
 	Dummy_ClearITPendingBit();
