@@ -48,8 +48,8 @@ static void prvLED3BlinkTask(void *pvParameters)
         xNextWakeTime = xTaskGetTickCount();
         for(;;)
         {				
-                //STM_EVAL_LEDToggle(LED3);
-                GPIOC->ODR ^= (GPIO_Pin_8 | GPIO_Pin_9);
+                STM_EVAL_LEDToggle(LED3);
+//                GPIOC->ODR ^= GPIO_Pin_9;
                 vTaskDelayUntil(&xNextWakeTime, xFrequency);
         }
 }
@@ -65,24 +65,25 @@ static void prvButtonCheckTask(void *pvParameters)
 {	
         static uint8_t bounce_count;
         portTickType xNextWakeTime;
-        const portTickType xFrequency = 20;
+        const portTickType xFrequency = 5;
         xNextWakeTime = xTaskGetTickCount();
 
         /* 创建信号 */
         vSemaphoreCreateBinary(xButtonSpeedUpSemaphore);	
 
         /* 如果创建信号成功，将信号初始化为0 */	
-        if(xButtonSpeedUpSemaphore != NULL) {
+        if (xButtonSpeedUpSemaphore != NULL) {
                 xSemaphoreTake(xButtonSpeedUpSemaphore, (portTickType)0);
         }	
 
         for(;;) {
                 /* 读取按键状态 */
-                if(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_0) == pdTRUE)//如果检测到按键按下
+                if (GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_0) == pdTRUE)//如果检测到按键按下
                 {
                         bounce_count++;
                         if (bounce_count == DEBOUNCECOUNTS)//按键防抖
                         {	
+				STM_EVAL_LEDToggle(LED4);
                                 xSemaphoreGive(xButtonSpeedUpSemaphore);//释放按键信号 
                         }
                 }
