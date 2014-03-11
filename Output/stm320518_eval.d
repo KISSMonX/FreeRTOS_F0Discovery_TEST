@@ -1,9 +1,0 @@
-.\output\stm320518_eval.o: Board_Task\stm320518_eval.c
-.\output\stm320518_eval.o: Board_Task\stm320518_eval.h
-.\output\stm320518_eval.o: Board_Task\stm32f0xx.h
-.\output\stm320518_eval.o: E:\Keil_v5\ARM\PACK\ARM\CMSIS\3.20.4\CMSIS\Include\core_cm0.h
-.\output\stm320518_eval.o: E:\Keil_v5\ARM\ARMCC\bin\..\include\stdint.h
-.\output\stm320518_eval.o: E:\Keil_v5\ARM\PACK\ARM\CMSIS\3.20.4\CMSIS\Include\core_cmInstr.h
-.\output\stm320518_eval.o: E:\Keil_v5\ARM\PACK\ARM\CMSIS\3.20.4\CMSIS\Include\core_cmFunc.h
-.\output\stm320518_eval.o: E:\Keil_v5\ARM\PACK\Keil\STM32F0xx_DFP\1.0.1\Device\Include\system_stm32f0xx.h
-.\output\stm320518_eval.o: Board_Task\stm32_eval_legacy.h
