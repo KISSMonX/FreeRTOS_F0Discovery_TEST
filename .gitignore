@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 *.pyc
 *.map
 *.dblite
@@ -37,4 +38,44 @@
 *.dat
 
 build
+=======
+*.pyc
+*.map
+*.dblite
+*.elf
+*.bin
+*.axf
+*.exe
+*.pdb
+*.idb
+*.lst
+*.o
+*.crf
+*.d
+*._i
+*.obj
+*.iex
+*.plg
+*.lnp
+*.ilk
+*.m51
+*.hex
+*.pdf
+*.bak
+*.db
+*.i
+*.doc
+*.docx
+*.uvproj
+*.uvopt
+*.think
+*.Administrator
+*.KISSMonX
+*.uvoptx
+*.uvprojx
+*.dep
+*.htm*
+
+build
+>>>>>>> b59238f... 格式化了一部分代码, 尼玛看起来舒服一些.
 *~
