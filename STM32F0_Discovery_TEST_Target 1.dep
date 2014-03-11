@@ -1,8 +1,0 @@
-Dependencies for Project 'STM32F0_Discovery_TEST', Target 'Target 1': (DO NOT MODIFY !)
-F (.\FreeRTOS\croutine.c)(0x5302F104)(-c --cpu Cortex-M0 --li -g -O0 --apcs=interwork -I D:\Keil\ARM\RV31\INC-I D:\Keil\ARM\CMSIS\Include-o .\croutine.o --omf_browse .\croutine.crf --depend .\croutine.d)
-F (.\FreeRTOS\event_groups.c)(0x5302F104)(-c --cpu Cortex-M0 --li -g -O0 --apcs=interwork -I D:\Keil\ARM\RV31\INC-I D:\Keil\ARM\CMSIS\Include-o .\event_groups.o --omf_browse .\event_groups.crf --depend .\event_groups.d)
-F (.\FreeRTOS\list.c)(0x5302F104)(-c --cpu Cortex-M0 --li -g -O0 --apcs=interwork -I D:\Keil\ARM\RV31\INC-I D:\Keil\ARM\CMSIS\Include-o .\list.o --omf_browse .\list.crf --depend .\list.d)
-F (.\FreeRTOS\queue.c)(0x530417A2)(-c --cpu Cortex-M0 --li -g -O0 --apcs=interwork -I D:\Keil\ARM\RV31\INC-I D:\Keil\ARM\CMSIS\Include-o .\queue.o --omf_browse .\queue.crf --depend .\queue.d)
-F (.\FreeRTOS\tasks.c)(0x53043AEA)(-c --cpu Cortex-M0 --li -g -O0 --apcs=interwork -I D:\Keil\ARM\RV31\INC-I D:\Keil\ARM\CMSIS\Include-o .\tasks.o --omf_browse .\tasks.crf --depend .\tasks.d)
-F (.\FreeRTOS\timers.c)(0x5304102C)(-c --cpu Cortex-M0 --li -g -O0 --apcs=interwork -I D:\Keil\ARM\RV31\INC-I D:\Keil\ARM\CMSIS\Include-o .\timers.o --omf_browse .\timers.crf --depend .\timers.d)
-F (.\FreeRTOS\portable\Keil\ARM_CM0\port.c)(0x53171398)(-c --cpu Cortex-M0 --li -g -O0 --apcs=interwork -I D:\Keil\ARM\RV31\INC-I D:\Keil\ARM\CMSIS\Include-o .\port.o --omf_browse .\port.crf --depend .\port.d)
