@@ -619,7 +619,7 @@ eTaskState eTaskGetState( TaskHandle_t xTask ) PRIVILEGED_FUNCTION;
    <pre>
  void vAFunction( void )
  {
- TaskHandle_t xHandle;
+	TaskHandle_t xHandle;
 
 	 // Create a task, storing the handle.
 	 xTaskCreate( vTaskCode, "NAME", STACK_SIZE, NULL, tskIDLE_PRIORITY, &xHandle );

@@ -211,12 +211,10 @@ void STM_EVAL_PBInit(Button_TypeDef Button, ButtonMode_TypeDef Button_Mode)
                 /* Configure Button EXTI line */
                 EXTI_InitStructure.EXTI_Line = BUTTON_EXTI_LINE[Button];
                 EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
-                if (Button != BUTTON_USER)
-                {
+                if (Button != BUTTON_USER) {
                         EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising;
                 }
-                else
-                {
+                else {
                         EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling;    
                 }
                 EXTI_InitStructure.EXTI_LineCmd = ENABLE;

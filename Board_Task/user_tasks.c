@@ -104,13 +104,13 @@ static void prvUsart1Task(void *pvParameters)
         char ch;
         portTickType xLastWakeTime;   
         const portTickType xFrequency = 50;   
-        xLastWakeTime=xTaskGetTickCount();   
+        xLastWakeTime = xTaskGetTickCount();   
 
         /* 创建能容纳128个字符的队列 */
         RxQueue = xQueueCreate(configCOM1_RX_BUFFER_LENGTH, sizeof(portCHAR));   
         TxQueue = xQueueCreate(configCOM1_TX_BUFFER_LENGTH, sizeof(portCHAR));
 
-        USART1PutString(pcUsartTaskStartMsg,strlen(pcUsartTaskStartMsg));
+        USART1PutString(pcUsartTaskStartMsg, strlen(pcUsartTaskStartMsg));
 
         for( ;; )   
         {             
