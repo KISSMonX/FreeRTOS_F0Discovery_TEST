@@ -1,0 +1,5 @@
+-c --cpu Cortex-M0 -g -O0 --apcs=interwork -I.\FreeRTOS\include -I.\Libraries\STM32F0xx_StdPeriph_Driver\inc -I.\Board_Task -I.\Common\include
+-I E:\Keil_v5\ARM\RV31\INC
+-I E:\Keil_v5\ARM\PACK\ARM\CMSIS\3.20.4\CMSIS\Include
+-I E:\Keil_v5\ARM\PACK\Keil\STM32F0xx_DFP\1.0.1\Device\Include
+-DSTM32F030 -o .\output\main-full.o --omf_browse .\output\main-full.crf --depend .\output\main-full.d "Board_Task\main-full.c"
