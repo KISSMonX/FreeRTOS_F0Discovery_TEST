@@ -314,7 +314,7 @@ PRIVILEGED_DATA static volatile UBaseType_t uxSchedulerSuspended	= ( UBaseType_t
 
 	#define taskSELECT_HIGHEST_PRIORITY_TASK()														\
 	{																								\
-	UBaseType_t uxTopPriority;																		\
+		UBaseType_t uxTopPriority;																		\
 																									\
 		/* Find the highest priority queue that contains ready tasks. */							\
 		portGET_HIGHEST_PRIORITY( uxTopPriority, uxTopReadyPriority );								\
@@ -514,8 +514,8 @@ static void prvResetNextTaskUnblockTime( void );
 
 BaseType_t xTaskGenericCreate( TaskFunction_t pxTaskCode, const char * const pcName, const uint16_t usStackDepth, void * const pvParameters, UBaseType_t uxPriority, TaskHandle_t * const pxCreatedTask, StackType_t * const puxStackBuffer, const MemoryRegion_t * const xRegions ) /*lint !e971 Unqualified char types are allowed for strings and single characters only. */
 {
-BaseType_t xReturn;
-TCB_t * pxNewTCB;
+	BaseType_t xReturn;
+	TCB_t * pxNewTCB;
 
 	configASSERT( pxTaskCode );
 	configASSERT( ( ( uxPriority & ( ~portPRIVILEGE_BIT ) ) < configMAX_PRIORITIES ) );
@@ -694,7 +694,7 @@ TCB_t * pxNewTCB;
 
 	void vTaskDelete( TaskHandle_t xTaskToDelete )
 	{
-	TCB_t *pxTCB;
+		TCB_t *pxTCB;
 
 		taskENTER_CRITICAL();
 		{
@@ -788,33 +788,29 @@ TCB_t * pxNewTCB;
 			/* Generate the tick time at which the task wants to wake. */
 			xTimeToWake = *pxPreviousWakeTime + xTimeIncrement;
 
-			if( xConstTickCount < *pxPreviousWakeTime )
-			{
+			if( xConstTickCount < *pxPreviousWakeTime ) {
 				/* The tick count has overflowed since this function was
 				lasted called.  In this case the only time we should ever
 				actually delay is if the wake time has also	overflowed,
 				and the wake time is greater than the tick time.  When this
 				is the case it is as if neither time had overflowed. */
-				if( ( xTimeToWake < *pxPreviousWakeTime ) && ( xTimeToWake > xConstTickCount ) )
-				{
+				if( ( xTimeToWake < *pxPreviousWakeTime ) 
+					&& ( xTimeToWake > xConstTickCount ) ) {
 					xShouldDelay = pdTRUE;
 				}
-				else
-				{
+				else {
 					mtCOVERAGE_TEST_MARKER();
 				}
 			}
-			else
-			{
+			else {
 				/* The tick time has not overflowed.  In this case we will
 				delay if either the wake time has overflowed, and/or the
 				tick time is less than the wake time. */
-				if( ( xTimeToWake < *pxPreviousWakeTime ) || ( xTimeToWake > xConstTickCount ) )
-				{
+				if( ( xTimeToWake < *pxPreviousWakeTime ) 
+					|| ( xTimeToWake > xConstTickCount ) ) {
 					xShouldDelay = pdTRUE;
 				}
-				else
-				{
+				else {
 					mtCOVERAGE_TEST_MARKER();
 				}
 			}
@@ -822,28 +818,25 @@ TCB_t * pxNewTCB;
 			/* Update the wake time ready for the next call. */
 			*pxPreviousWakeTime = xTimeToWake;
 
-			if( xShouldDelay != pdFALSE )
-			{
+			if( xShouldDelay != pdFALSE ) {
 				traceTASK_DELAY_UNTIL();
 
 				/* Remove the task from the ready list before adding it to the
 				blocked list as the same list item is used for both lists. */
-				if( uxListRemove( &( pxCurrentTCB->xGenericListItem ) ) == ( UBaseType_t ) 0 )
-				{
+				if( uxListRemove( &( pxCurrentTCB->xGenericListItem ) ) 
+					== ( UBaseType_t ) 0 ) {
 					/* The current task must be in a ready list, so there is
 					no need to check, and the port reset macro can be called
 					directly. */
 					portRESET_READY_PRIORITY( pxCurrentTCB->uxPriority, uxTopReadyPriority );
 				}
-				else
-				{
+				else {
 					mtCOVERAGE_TEST_MARKER();
 				}
 
 				prvAddCurrentTaskToDelayedList( xTimeToWake );
 			}
-			else
-			{
+			else {
 				mtCOVERAGE_TEST_MARKER();
 			}
 		}
@@ -851,12 +844,10 @@ TCB_t * pxNewTCB;
 
 		/* Force a reschedule if xTaskResumeAll has not already done so, we may
 		have put ourselves to sleep. */
-		if( xAlreadyYielded == pdFALSE )
-		{
+		if( xAlreadyYielded == pdFALSE ) {
 			portYIELD_WITHIN_API();
 		}
-		else
-		{
+		else {
 			mtCOVERAGE_TEST_MARKER();
 		}
 	}
@@ -895,34 +886,30 @@ TCB_t * pxNewTCB;
 				/* We must remove ourselves from the ready list before adding
 				ourselves to the blocked list as the same list item is used for
 				both lists. */
-				if( uxListRemove( &( pxCurrentTCB->xGenericListItem ) ) == ( UBaseType_t ) 0 )
-				{
+				if( uxListRemove( &( pxCurrentTCB->xGenericListItem ) ) 
+					== ( UBaseType_t ) 0 ) {
 					/* The current task must be in a ready list, so there is
 					no need to check, and the port reset macro can be called
 					directly. */
 					portRESET_READY_PRIORITY( pxCurrentTCB->uxPriority, uxTopReadyPriority );
 				}
-				else
-				{
+				else {
 					mtCOVERAGE_TEST_MARKER();
 				}
 				prvAddCurrentTaskToDelayedList( xTimeToWake );
 			}
 			xAlreadyYielded = xTaskResumeAll();
 		}
-		else
-		{
+		else {
 			mtCOVERAGE_TEST_MARKER();
 		}
 
 		/* Force a reschedule if xTaskResumeAll has not already done so, we may
 		have put ourselves to sleep. */
-		if( xAlreadyYielded == pdFALSE )
-		{
+		if( xAlreadyYielded == pdFALSE ) {
 			portYIELD_WITHIN_API();
 		}
-		else
-		{
+		else {
 			mtCOVERAGE_TEST_MARKER();
 		}
 	}
@@ -934,27 +921,25 @@ TCB_t * pxNewTCB;
 
 	eTaskState eTaskGetState( TaskHandle_t xTask )
 	{
-	eTaskState eReturn;
-	List_t *pxStateList;
-	const TCB_t * const pxTCB = ( TCB_t * ) xTask;
+		eTaskState eReturn;
+		List_t *pxStateList;
+		const TCB_t * const pxTCB = ( TCB_t * ) xTask;
 
 		configASSERT( pxTCB );
 
-		if( pxTCB == pxCurrentTCB )
-		{
+		if( pxTCB == pxCurrentTCB ) {
 			/* The task calling this function is querying its own state. */
 			eReturn = eRunning;
 		}
-		else
-		{
+		else {
 			taskENTER_CRITICAL();
 			{
 				pxStateList = ( List_t * ) listLIST_ITEM_CONTAINER( &( pxTCB->xGenericListItem ) );
 			}
 			taskEXIT_CRITICAL();
 
-			if( ( pxStateList == pxDelayedTaskList ) || ( pxStateList == pxOverflowDelayedTaskList ) )
-			{
+			if( ( pxStateList == pxDelayedTaskList ) 
+				|| ( pxStateList == pxOverflowDelayedTaskList ) ) {
 				/* The task being queried is referenced from one of the Blocked
 				lists. */
 				eReturn = eBlocked;
@@ -966,12 +951,11 @@ TCB_t * pxNewTCB;
 					/* The task being queried is referenced from the suspended
 					list.  Is it genuinely suspended or is it block
 					indefinitely? */
-					if( listLIST_ITEM_CONTAINER( &( pxTCB->xEventListItem ) ) == NULL )
-					{
+					if( listLIST_ITEM_CONTAINER( &( pxTCB->xEventListItem ) ) 
+						== NULL ) {
 						eReturn = eSuspended;
 					}
-					else
-					{
+					else {
 						eReturn = eBlocked;
 					}
 				}
@@ -986,8 +970,7 @@ TCB_t * pxNewTCB;
 				}
 			#endif
 
-			else
-			{
+			else {
 				/* If the task is not in any other state, it must be in the
 				Ready (including pending ready) state. */
 				eReturn = eReady;
@@ -1004,8 +987,8 @@ TCB_t * pxNewTCB;
 
 	UBaseType_t uxTaskPriorityGet( TaskHandle_t xTask )
 	{
-	TCB_t *pxTCB;
-	UBaseType_t uxReturn;
+		TCB_t *pxTCB;
+		UBaseType_t uxReturn;
 
 		taskENTER_CRITICAL();
 		{
@@ -1026,19 +1009,17 @@ TCB_t * pxNewTCB;
 
 	void vTaskPrioritySet( TaskHandle_t xTask, UBaseType_t uxNewPriority )
 	{
-	TCB_t *pxTCB;
-	UBaseType_t uxCurrentBasePriority, uxPriorityUsedOnEntry;
-	BaseType_t xYieldRequired = pdFALSE;
+		TCB_t *pxTCB;
+		UBaseType_t uxCurrentBasePriority, uxPriorityUsedOnEntry;
+		BaseType_t xYieldRequired = pdFALSE;
 
 		configASSERT( ( uxNewPriority < configMAX_PRIORITIES ) );
 
 		/* Ensure the new priority is valid. */
-		if( uxNewPriority >= ( UBaseType_t ) configMAX_PRIORITIES )
-		{
+		if( uxNewPriority >= ( UBaseType_t ) configMAX_PRIORITIES ) {
 			uxNewPriority = ( UBaseType_t ) configMAX_PRIORITIES - ( UBaseType_t ) 1U;
 		}
-		else
-		{
+		else {
 			mtCOVERAGE_TEST_MARKER();
 		}
 
@@ -1064,38 +1045,31 @@ TCB_t * pxNewTCB;
 			{
 				/* The priority change may have readied a task of higher
 				priority than the calling task. */
-				if( uxNewPriority > uxCurrentBasePriority )
-				{
-					if( pxTCB != pxCurrentTCB )
-					{
+				if( uxNewPriority > uxCurrentBasePriority ) {
+					if( pxTCB != pxCurrentTCB ) {
 						/* The priority of a task other than the currently
 						running task is being raised.  Is the priority being
 						raised above that of the running task? */
-						if( uxNewPriority >= pxCurrentTCB->uxPriority )
-						{
+						if( uxNewPriority >= pxCurrentTCB->uxPriority ) {
 							xYieldRequired = pdTRUE;
 						}
-						else
-						{
+						else {
 							mtCOVERAGE_TEST_MARKER();
 						}
 					}
-					else
-					{
+					else {
 						/* The priority of the running task is being raised,
 						but the running task must already be the highest
 						priority task able to run so no yield is required. */
 					}
 				}
-				else if( pxTCB == pxCurrentTCB )
-				{
+				else if( pxTCB == pxCurrentTCB ) {
 					/* Setting the priority of the running task down means
 					there may now be another task of higher priority that
 					is ready to execute. */
 					xYieldRequired = pdTRUE;
 				}
-				else
-				{
+				else {
 					/* Setting the priority of any other task down does not
 					require a yield as the running task must be above the
 					new priority of the task being modified. */
@@ -1110,12 +1084,10 @@ TCB_t * pxNewTCB;
 				{
 					/* Only change the priority being used if the task is not
 					currently using an inherited priority. */
-					if( pxTCB->uxBasePriority == pxTCB->uxPriority )
-					{
+					if( pxTCB->uxBasePriority == pxTCB->uxPriority ) {
 						pxTCB->uxPriority = uxNewPriority;
 					}
-					else
-					{
+					else {
 						mtCOVERAGE_TEST_MARKER();
 					}
 
@@ -1130,12 +1102,12 @@ TCB_t * pxNewTCB;
 
 				/* Only reset the event list item value if the value is not
 				being used for anything else. */
-				if( ( listGET_LIST_ITEM_VALUE( &( pxTCB->xEventListItem ) ) & taskEVENT_LIST_ITEM_VALUE_IN_USE ) == 0UL )
+				if( ( listGET_LIST_ITEM_VALUE( &( pxTCB->xEventListItem ) ) 
+					& taskEVENT_LIST_ITEM_VALUE_IN_USE ) == 0UL ) 
 				{
 					listSET_LIST_ITEM_VALUE( &( pxTCB->xEventListItem ), ( ( TickType_t ) configMAX_PRIORITIES - ( TickType_t ) uxNewPriority ) ); /*lint !e961 MISRA exception as the casts are only redundant for some ports. */
 				}
-				else
-				{
+				else {
 					mtCOVERAGE_TEST_MARKER();
 				}
 
@@ -1148,30 +1120,26 @@ TCB_t * pxNewTCB;
 					/* The task is currently in its ready list - remove before adding
 					it to it's new ready list.  As we are in a critical section we
 					can do this even if the scheduler is suspended. */
-					if( uxListRemove( &( pxTCB->xGenericListItem ) ) == ( UBaseType_t ) 0 )
-					{
+					if( uxListRemove( &( pxTCB->xGenericListItem ) ) 
+						== ( UBaseType_t ) 0 ) {
 						/* It is known that the task is in its ready list so
 						there is no need to check again and the port level
 						reset macro can be called directly. */
 						portRESET_READY_PRIORITY( uxPriorityUsedOnEntry, uxTopReadyPriority );
 					}
-					else
-					{
+					else {
 						mtCOVERAGE_TEST_MARKER();
 					}
 					prvAddTaskToReadyList( pxTCB );
 				}
-				else
-				{
+				else {
 					mtCOVERAGE_TEST_MARKER();
 				}
 
-				if( xYieldRequired == pdTRUE )
-				{
+				if( xYieldRequired == pdTRUE ) {
 					taskYIELD_IF_USING_PREEMPTION();
 				}
-				else
-				{
+				else {
 					mtCOVERAGE_TEST_MARKER();
 				}
 
@@ -1190,7 +1158,7 @@ TCB_t * pxNewTCB;
 
 	void vTaskSuspend( TaskHandle_t xTaskToSuspend )
 	{
-	TCB_t *pxTCB;
+		TCB_t *pxTCB;
 
 		taskENTER_CRITICAL();
 		{
@@ -1225,44 +1193,37 @@ TCB_t * pxNewTCB;
 		}
 		taskEXIT_CRITICAL();
 
-		if( pxTCB == pxCurrentTCB )
-		{
-			if( xSchedulerRunning != pdFALSE )
-			{
+		if( pxTCB == pxCurrentTCB ) {
+			if ( xSchedulerRunning != pdFALSE )  {
 				/* The current task has just been suspended. */
 				configASSERT( uxSchedulerSuspended == 0 );
 				portYIELD_WITHIN_API();
 			}
-			else
-			{
+			else {
 				/* The scheduler is not running, but the task that was pointed
 				to by pxCurrentTCB has just been suspended and pxCurrentTCB
 				must be adjusted to point to a different task. */
-				if( listCURRENT_LIST_LENGTH( &xSuspendedTaskList ) == uxCurrentNumberOfTasks )
-				{
+				if( listCURRENT_LIST_LENGTH( &xSuspendedTaskList ) 
+					== uxCurrentNumberOfTasks ) {
 					/* No other tasks are ready, so set pxCurrentTCB back to
 					NULL so when the next task is created pxCurrentTCB will
 					be set to point to it no matter what its relative priority
 					is. */
 					pxCurrentTCB = NULL;
 				}
-				else
-				{
+				else {
 					vTaskSwitchContext();
 				}
 			}
 		}
-		else
-		{
-			if( xSchedulerRunning != pdFALSE )
-			{
+		else {
+			if( xSchedulerRunning != pdFALSE ) {
 				/* A task other than the currently running task was suspended,
 				reset the next expected unblock time in case it referred to the
 				task that is now in the Suspended state. */
 				prvResetNextTaskUnblockTime();
 			}
-			else
-			{
+			else {
 				mtCOVERAGE_TEST_MARKER();
 			}
 		}
@@ -1275,8 +1236,8 @@ TCB_t * pxNewTCB;
 
 	static BaseType_t prvTaskIsTaskSuspended( const TaskHandle_t xTask )
 	{
-	BaseType_t xReturn = pdFALSE;
-	const TCB_t * const pxTCB = ( TCB_t * ) xTask;
+		BaseType_t xReturn = pdFALSE;
+		const TCB_t * const pxTCB = ( TCB_t * ) xTask;
 
 		/* Accesses xPendingReadyList so must be called from a critical
 		section. */
@@ -1292,22 +1253,20 @@ TCB_t * pxNewTCB;
 			{
 				/* Is it in the suspended list because it is in the	Suspended
 				state, or because is is blocked with no timeout? */
-				if( listIS_CONTAINED_WITHIN( NULL, &( pxTCB->xEventListItem ) ) != pdFALSE )
+				if( listIS_CONTAINED_WITHIN( NULL, &( pxTCB->xEventListItem ) ) 
+					!= pdFALSE )
 				{
 					xReturn = pdTRUE;
 				}
-				else
-				{
+				else {
 					mtCOVERAGE_TEST_MARKER();
 				}
 			}
-			else
-			{
+			else  {
 				mtCOVERAGE_TEST_MARKER();
 			}
 		}
-		else
-		{
+		else {
 			mtCOVERAGE_TEST_MARKER();
 		}
 
@@ -1321,7 +1280,7 @@ TCB_t * pxNewTCB;
 
 	void vTaskResume( TaskHandle_t xTaskToResume )
 	{
-	TCB_t * const pxTCB = ( TCB_t * ) xTaskToResume;
+		TCB_t * const pxTCB = ( TCB_t * ) xTaskToResume;
 
 		/* It does not make sense to resume the calling task. */
 		configASSERT( xTaskToResume );
@@ -1375,9 +1334,9 @@ TCB_t * pxNewTCB;
 
 	BaseType_t xTaskResumeFromISR( TaskHandle_t xTaskToResume )
 	{
-	BaseType_t xYieldRequired = pdFALSE;
-	TCB_t * const pxTCB = ( TCB_t * ) xTaskToResume;
-	UBaseType_t uxSavedInterruptStatus;
+		BaseType_t xYieldRequired = pdFALSE;
+		TCB_t * const pxTCB = ( TCB_t * ) xTaskToResume;
+		UBaseType_t uxSavedInterruptStatus;
 
 		configASSERT( xTaskToResume );
 
@@ -1445,7 +1404,7 @@ TCB_t * pxNewTCB;
 
 void vTaskStartScheduler( void )
 {
-BaseType_t xReturn;
+	BaseType_t xReturn;
 
 	/* Add the idle task at the lowest priority. */
 	#if ( INCLUDE_xTaskGetIdleTaskHandle == 1 )
@@ -1546,7 +1505,7 @@ void vTaskSuspendAll( void )
 
 	static TickType_t prvGetExpectedIdleTime( void )
 	{
-	TickType_t xReturn;
+		TickType_t xReturn;
 
 		if( pxCurrentTCB->uxPriority > tskIDLE_PRIORITY )
 		{
@@ -1572,8 +1531,8 @@ void vTaskSuspendAll( void )
 
 BaseType_t xTaskResumeAll( void )
 {
-TCB_t *pxTCB;
-BaseType_t xAlreadyYielded = pdFALSE;
+	TCB_t *pxTCB;
+	BaseType_t xAlreadyYielded = pdFALSE;
 
 	/* If uxSchedulerSuspended is zero then this function does not match a
 	previous call to vTaskSuspendAll(). */
@@ -1665,7 +1624,7 @@ BaseType_t xAlreadyYielded = pdFALSE;
 
 TickType_t xTaskGetTickCount( void )
 {
-TickType_t xTicks;
+	TickType_t xTicks;
 
 	/* Critical section required if running on a 16 bit processor. */
 	taskENTER_CRITICAL();
@@ -1680,8 +1639,8 @@ TickType_t xTicks;
 
 TickType_t xTaskGetTickCountFromISR( void )
 {
-TickType_t xReturn;
-UBaseType_t uxSavedInterruptStatus;
+	TickType_t xReturn;
+	UBaseType_t uxSavedInterruptStatus;
 
 	/* RTOS ports that support interrupt nesting have the concept of a maximum
 	system call (or maximum API call) interrupt priority.  Interrupts that are
@@ -1721,7 +1680,7 @@ UBaseType_t uxTaskGetNumberOfTasks( void )
 
 	char *pcTaskGetTaskName( TaskHandle_t xTaskToQuery )
 	{
-	TCB_t *pxTCB;
+		TCB_t *pxTCB;
 
 		/* If null is passed in here then the name of the calling task is being queried. */
 		pxTCB = prvGetTCBFromHandle( xTaskToQuery );
@@ -1736,7 +1695,7 @@ UBaseType_t uxTaskGetNumberOfTasks( void )
 
 	UBaseType_t uxTaskGetSystemState( TaskStatus_t * const pxTaskStatusArray, const UBaseType_t uxArraySize, uint32_t * const pulTotalRunTime )
 	{
-	UBaseType_t uxTask = 0, uxQueue = configMAX_PRIORITIES;
+		UBaseType_t uxTask = 0, uxQueue = configMAX_PRIORITIES;
 
 		vTaskSuspendAll();
 		{
@@ -1745,8 +1704,7 @@ UBaseType_t uxTaskGetNumberOfTasks( void )
 			{
 				/* Fill in an TaskStatus_t structure with information on each
 				task in the Ready state. */
-				do
-				{
+				do {
 					uxQueue--;
 					uxTask += prvListTaskWithinSingleList( &( pxTaskStatusArray[ uxTask ] ), &( pxReadyTasksLists[ uxQueue ] ), eReady );
 
@@ -1840,9 +1798,9 @@ implementations require configUSE_TICKLESS_IDLE to be set to a value other than
 
 BaseType_t xTaskIncrementTick( void )
 {
-TCB_t * pxTCB;
-TickType_t xItemValue;
-BaseType_t xSwitchRequired = pdFALSE;
+	TCB_t * pxTCB;
+	TickType_t xItemValue;
+	BaseType_t xSwitchRequired = pdFALSE;
 
 	/* Called by the portable layer each time a tick interrupt occurs.
 	Increments the tick then checks to see if the new tick value will cause any
@@ -2016,7 +1974,7 @@ BaseType_t xSwitchRequired = pdFALSE;
 
 	void vTaskSetApplicationTaskTag( TaskHandle_t xTask, TaskHookFunction_t pxHookFunction )
 	{
-	TCB_t *xTCB;
+		TCB_t *xTCB;
 
 		/* If xTask is NULL then it is the task hook of the calling task that is
 		getting set. */
@@ -2043,8 +2001,8 @@ BaseType_t xSwitchRequired = pdFALSE;
 
 	TaskHookFunction_t xTaskGetApplicationTaskTag( TaskHandle_t xTask )
 	{
-	TCB_t *xTCB;
-	TaskHookFunction_t xReturn;
+		TCB_t *xTCB;
+		TaskHookFunction_t xReturn;
 
 		/* If xTask is NULL then we are setting our own task hook. */
 		if( xTask == NULL )

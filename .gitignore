@@ -8,6 +8,10 @@
 *.pdb
 *.idb
 *.lst
+*.o
+*.crf
+*.d
+*._i
 *.obj
 *.iex
 *.plg
@@ -26,7 +30,10 @@
 *.think
 *.Administrator
 *.KISSMonX
+*.uvoptx
+*.uvprojx
+*.dep
+*.htm*
+
 build
 *~
-/Swords/*.Administrator
-/output/Swords

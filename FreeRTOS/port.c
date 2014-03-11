@@ -52,8 +52,7 @@ static void prvPortStartFirstTask( void );
  */
 static void prvTaskExitError( void );
 
-/*-----------------------------------------------------------*/
-
+//=========================================================================================================
 /*
  * See header file for description.
  */
@@ -73,8 +72,9 @@ StackType_t *pxPortInitialiseStack( StackType_t *pxTopOfStack, TaskFunction_t px
 
 	return pxTopOfStack;
 }
-/*-----------------------------------------------------------*/
 
+
+//=========================================================================================================
 static void prvTaskExitError( void )
 {
 	/* A function that implements a task must not exit or attempt to return to
