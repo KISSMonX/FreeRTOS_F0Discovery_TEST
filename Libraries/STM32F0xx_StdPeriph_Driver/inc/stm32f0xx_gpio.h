@@ -55,13 +55,12 @@ extern "C" {
         /** @defgroup Configuration_Mode_enumeration 
          * @{
          */
-        typedef enum
-        {
+        typedef enum {
                 GPIO_Mode_IN   = 0x00, /*!< GPIO Input Mode              */
                 GPIO_Mode_OUT  = 0x01, /*!< GPIO Output Mode             */
                 GPIO_Mode_AF   = 0x02, /*!< GPIO Alternate function Mode */
                 GPIO_Mode_AN   = 0x03  /*!< GPIO Analog In/Out Mode      */
-        }GPIOMode_TypeDef;
+        } GPIOMode_TypeDef;
 
 #define IS_GPIO_MODE(MODE) (((MODE) == GPIO_Mode_IN)|| ((MODE) == GPIO_Mode_OUT) || \
                 ((MODE) == GPIO_Mode_AF)|| ((MODE) == GPIO_Mode_AN))

@@ -1,27 +1,29 @@
 #include <string.h>
 #include "FreeRTOS.h"
 #include "task.h"
-#include "stm32f0xx.h"                  // Device header
+#include "stm32f0xx.h"              
 #include "lcd.h"
 
 static void prvSetupHardware(void);	// 硬件初始化函数
-extern void prvUserTasks(void);		// LED闪烁任务文件
+extern void prvUserTasks(void);		
 
 //=========================================================================================================
 // 主函数
 int main(void)
 {
-	/* 初始化STM32F0XX Discovery硬件系统 */
-	prvSetupHardware();
-	/* 创建并运行用户任务 */
-	prvUserTasks();
+	
+	prvSetupHardware();		// 初始化STM32F0XX Discovery硬件系统
+	
+	prvUserTasks();			// 创建并运行用户任务 
+	
 	return 0;
 }
 
 //=========================================================================================================
-// 
+// 硬件初始化
 static void prvSetupHardware( void )
 {
+	// 内部外设结构体变量
 	GPIO_InitTypeDef  	GPIO_InitStructure;
 	USART_InitTypeDef 	USART_InitStructure;
 	NVIC_InitTypeDef	NVIC_InitStructure;
@@ -29,23 +31,24 @@ static void prvSetupHardware( void )
 	DMA_InitTypeDef 	DMA_InitStructure;	
 	
 
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2, ENABLE);	//SPI2模块时钟
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);  //USART1模块时钟	
-	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1 | 		//DMA1模块时钟
-				RCC_AHBPeriph_GPIOA |		//GPIOA模块时钟
-				RCC_AHBPeriph_GPIOB | 		//GPIOB模块时钟
-				RCC_AHBPeriph_GPIOC, ENABLE);	//GPIOC模块时钟											
+	//外设时钟配置---ENABLE
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2, ENABLE);	// SPI2模块时钟
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);  // USART1模块时钟	
+	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1 | 		// DMA1模块时钟
+				RCC_AHBPeriph_GPIOA |		// GPIOA模块时钟
+				RCC_AHBPeriph_GPIOB | 		// GPIOB模块时钟
+				RCC_AHBPeriph_GPIOC, ENABLE);	// GPIOC模块时钟											
 
 	/*
 	 * LED GPIO初始化
-	 * GPIOC：PC9控制LED3
+	 * GPIOC：PC9 控制LED3, PC8 控制 LED4
 	 */	 
-	GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_8 | GPIO_Pin_9;	 
-	GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_OUT;
-	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-	GPIO_InitStructure.GPIO_PuPd  = GPIO_PuPd_NOPULL;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_Init(GPIOC, &GPIO_InitStructure);
+	GPIO_InitStructure.GPIO_Pin   = (GPIO_Pin_8 | GPIO_Pin_9);	 
+	GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_OUT;		// 输出模式
+	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;		// 推挽输出
+	GPIO_InitStructure.GPIO_PuPd  = GPIO_PuPd_NOPULL;	// 禁止上下拉
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;	// IO 口速度
+	GPIO_Init(GPIOC, &GPIO_InitStructure);			// 写入配置
 	
 	/* 
 	 * 按键初始化
