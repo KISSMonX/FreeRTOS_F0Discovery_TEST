@@ -78,7 +78,7 @@ static void prvSetupHardware( void )
 	USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;//无硬件流控制
 	USART_InitStructure.USART_Mode       = USART_Mode_Rx | USART_Mode_Tx;//启用发送与接收
 	USART_Init(USART1, &USART_InitStructure);			// 初始化USART1模块
-	USART_Cmd(USART1, ENABLE);//使能USART1模块
+	USART_Cmd(USART1, ENABLE);					//使能USART1模块
 	USART_DMACmd(USART1, (USART_DMAReq_Tx | USART_DMAReq_Rx), ENABLE);//使能DMA传输
 	USART_ITConfig(USART1, USART_IT_TXE, DISABLE);			// 禁用USART1发送中断
 	USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);			// 使能USART1接收中断	
@@ -91,7 +91,7 @@ static void prvSetupHardware( void )
 	GPIO_PinAFConfig(GPIOB, GPIO_PinSource13, GPIO_AF_0);//PB13-SPI SCLK
 	GPIO_PinAFConfig(GPIOB, GPIO_PinSource15, GPIO_AF_0);//PB15-SPI MOSI
 	
-	GPIO_InitStructure.GPIO_Pin   =  GPIO_Pin_13 | GPIO_Pin_15;//PB13和PB15用于SPI通讯
+	GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_13 | GPIO_Pin_15;//PB13和PB15用于SPI通讯
 	GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_AF;//选用端口的备用(SPI Port)
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;//端口速度50MHz
 	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;//推挽输出
