@@ -1,10 +1,10 @@
 /*-----------------------------------------------------------
  *创建5个任务：
- *1.LED3闪烁任务prvLED3BlinkTask
- *2.按键检测任务prvButtonCheckTask
- *3.USART1通讯任务prvUsart1Task
- *4.LCD5110显示任务prvLCDTask
- *5.
+ *1. LED3闪烁任务prvLED3BlinkTask
+ *2. 按键检测任务prvButtonCheckTask
+ *3. USART1通讯任务prvUsart1Task
+ *4. LCD5110显示任务prvLCDTask
+ *5. 增加 IO 口反转速度检测
  *-----------------------------------------------------------*/
 
 /* 标准头文件 */	
@@ -32,9 +32,9 @@
 
 //const char *const pcUsartTaskStartMsg = "USART task started.\r\n";
 char * pcUsartTaskStartMsg = "USART task started.\r\n";
-static xSemaphoreHandle xButtonSpeedUpSemaphore;//按键信号
-xQueueHandle RxQueue, TxQueue;//串行口发送/接收队列 
-uint8_t u8LCDFrameBuffer[LCD_X*LCD_Y/8];//LCD 显示缓冲区
+static xSemaphoreHandle xButtonSpeedUpSemaphore;	// 按键信号
+xQueueHandle RxQueue, TxQueue;				// 串行口发送/接收队列 
+uint8_t u8LCDFrameBuffer[LCD_X*LCD_Y/8];		// LCD 显示缓冲区
 
 //=========================================================================================================
 /**
@@ -46,7 +46,7 @@ uint8_t u8LCDFrameBuffer[LCD_X*LCD_Y/8];//LCD 显示缓冲区
 static void prvLED3BlinkTask(void *pvParameters)
 {
         portTickType xNextWakeTime;
-        const portTickType xFrequency = 100;
+        const portTickType xFrequency = 60;
         xNextWakeTime = xTaskGetTickCount();
         for(;;)
         {				
@@ -64,12 +64,13 @@ static void prvLED3BlinkTask(void *pvParameters)
  * @retval 无
  */
 //=========================================================================================================
-static void prvPB13_ToggleTask(void *pvParameters)
-{
-	for (;;) {
-		GPIOB->ODR ^= GPIO_Pin_13;
-	}
-}	
+//static void prvPB13_ToggleTask(void *pvParameters)
+//{
+//	for (;;) {
+//		GPIOB->ODR ^= GPIO_Pin_13;
+////		vTaskDelay(1);
+//	}
+//}	
 	
 	
 //=========================================================================================================
@@ -256,13 +257,6 @@ void prvUserTasks(void)
                         NULL, 				//任务参数
                         mainLED3_BLINK_TASK_PRIORITY,	//任务优先级 
                         NULL);				//任务句柄
-
-	xTaskCreate(prvPB13_ToggleTask,
-                        ( char *) "Port Test",
-                        configMINIMAL_STACK_SIZE,
-                        NULL,
-                        mainPORTst_TASK_PRIORITY,	
-                        NULL);
 			
         xTaskCreate(prvButtonCheckTask,
                         ( char *) "BTN CHECK",
@@ -285,6 +279,13 @@ void prvUserTasks(void)
 			mainLCD_TASK_PRIORITY,
 			NULL);		
 
+//	xTaskCreate(prvPB13_ToggleTask,
+//                        ( char *) "Port Test",
+//                        configMINIMAL_STACK_SIZE,
+//                        NULL,
+//                        mainPORTst_TASK_PRIORITY,	
+//                        NULL);
+			
         /* 启动任务调度器 */
         vTaskStartScheduler();
 
