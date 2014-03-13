@@ -48,17 +48,14 @@ extern "C" {
          * @brief  NVIC Init Structure definition  
          */
 
-        typedef struct
-        {
+        typedef struct {
                 uint8_t NVIC_IRQChannel;             /*!< Specifies the IRQ channel to be enabled or disabled.
                                                        This parameter can be a value of @ref IRQn_Type 
                                                        (For the complete STM32 Devices IRQ Channels list, 
                                                        please refer to stm32f0xx.h file) */
-
                 uint8_t NVIC_IRQChannelPriority;     /*!< Specifies the priority level for the IRQ channel specified
                                                        in NVIC_IRQChannel. This parameter can be a value
                                                        between 0 and 3.  */
-
                 FunctionalState NVIC_IRQChannelCmd;  /*!< Specifies whether the IRQ channel defined in NVIC_IRQChannel
                                                        will be enabled or disabled. 
                                                        This parameter can be set either to ENABLE or DISABLE */   

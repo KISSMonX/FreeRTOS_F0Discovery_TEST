@@ -46,8 +46,7 @@ extern "C" {
         /** 
          * @brief  DMA Init structures definition
          */
-        typedef struct
-        {
+        typedef struct {
                 uint32_t DMA_PeripheralBaseAddr; /*!< Specifies the peripheral base address for DMAy Channelx.              */
 
                 uint32_t DMA_MemoryBaseAddr;     /*!< Specifies the memory base address for DMAy Channelx.                  */
@@ -81,7 +80,7 @@ extern "C" {
 
                 uint32_t DMA_M2M;                /*!< Specifies if the DMAy Channelx will be used in memory-to-memory transfer.
                                                    This parameter can be a value of @ref DMA_memory_to_memory            */
-        }DMA_InitTypeDef;
+        } DMA_InitTypeDef;
 
         /* Exported constants --------------------------------------------------------*/
 

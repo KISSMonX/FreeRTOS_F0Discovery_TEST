@@ -1548,14 +1548,12 @@ void USART_DMACmd(USART_TypeDef* USARTx, uint32_t USART_DMAReq, FunctionalState 
         assert_param(IS_USART_DMAREQ(USART_DMAReq));  
         assert_param(IS_FUNCTIONAL_STATE(NewState)); 
 
-        if (NewState != DISABLE)
-        {
+        if (NewState != DISABLE) {
                 /* Enable the DMA transfer for selected requests by setting the DMAT and/or
                    DMAR bits in the USART CR3 register */
                 USARTx->CR3 |= USART_DMAReq;
         }
-        else
-        {
+        else {
                 /* Disable the DMA transfer for selected requests by clearing the DMAT and/or
                    DMAR bits in the USART CR3 register */
                 USARTx->CR3 &= (uint32_t)~USART_DMAReq;
@@ -1765,14 +1763,12 @@ detection interrupt.
                         assert_param(IS_USART_REQUEST(USART_Request));
                         assert_param(IS_FUNCTIONAL_STATE(NewState)); 
 
-                        if (NewState != DISABLE)
-                        {
+                        if (NewState != DISABLE) {
                                 /* Enable the USART ReQuest by setting the dedicated request bit in the RQR
                                    register.*/
                                 USARTx->RQR |= USART_Request;
                         }
-                        else
-                        {
+                        else {
                                 /* Disable the USART ReQuest by clearing the dedicated request bit in the RQR
                                    register.*/
                                 USARTx->RQR &= (uint32_t)~USART_Request;

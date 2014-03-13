@@ -279,13 +279,11 @@ void DMA_Cmd(DMA_Channel_TypeDef* DMAy_Channelx, FunctionalState NewState)
         assert_param(IS_DMA_ALL_PERIPH(DMAy_Channelx));
         assert_param(IS_FUNCTIONAL_STATE(NewState));
 
-        if (NewState != DISABLE)
-        {
+        if (NewState != DISABLE) {
                 /* Enable the selected DMAy Channelx */
                 DMAy_Channelx->CCR |= DMA_CCR_EN;
         }
-        else
-        {
+        else {
                 /* Disable the selected DMAy Channelx */
                 DMAy_Channelx->CCR &= (uint16_t)(~DMA_CCR_EN);
         }
@@ -432,13 +430,11 @@ void DMA_ITConfig(DMA_Channel_TypeDef* DMAy_Channelx, uint32_t DMA_IT, Functiona
         assert_param(IS_DMA_CONFIG_IT(DMA_IT));
         assert_param(IS_FUNCTIONAL_STATE(NewState));
 
-        if (NewState != DISABLE)
-        {
+        if (NewState != DISABLE) {
                 /* Enable the selected DMA interrupts */
                 DMAy_Channelx->CCR |= DMA_IT;
         }
-        else
-        {
+        else {
                 /* Disable the selected DMA interrupts */
                 DMAy_Channelx->CCR &= ~DMA_IT;
         }
@@ -485,13 +481,11 @@ FlagStatus DMA_GetFlagStatus(uint32_t DMA_FLAG)
         assert_param(IS_DMA_GET_FLAG(DMA_FLAG));
 
         /* Check the status of the specified DMA flag */
-        if ((DMA1->ISR & DMA_FLAG) != (uint32_t)RESET)
-        {
+        if ((DMA1->ISR & DMA_FLAG) != (uint32_t)RESET) {
                 /* DMA_FLAG is set */
                 bitstatus = SET;
         }
-        else
-        {
+        else {
                 /* DMA_FLAG is reset */
                 bitstatus = RESET;
         }

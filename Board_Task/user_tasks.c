@@ -21,6 +21,7 @@
 #define mainLCD_TASK_PRIORITY		(tskIDLE_PRIORITY + 2)
 #define mainBUTTON_CHECK_TASK_PRIORITY	(tskIDLE_PRIORITY + 3)
 #define mainUSART1_TASK_PRIORITY	(tskIDLE_PRIORITY + 4)	 
+#define mainPORTst_TASK_PRIORITY	(tskIDLE_PRIORITY + 5)	
 
 #define DEBOUNCECOUNTS 			10
 #define serPUT_STRING_CHAR_DELAY        (5 / portTICK_RATE_MS)
@@ -35,16 +36,17 @@ static xSemaphoreHandle xButtonSpeedUpSemaphore;//按键信号
 xQueueHandle RxQueue, TxQueue;//串行口发送/接收队列 
 uint8_t u8LCDFrameBuffer[LCD_X*LCD_Y/8];//LCD 显示缓冲区
 
-
+//=========================================================================================================
 /**
  * @brief  LED3闪烁任务：每隔500ms切换LED3的显示状态.
  * @param  pvParameters:任务默认参数.
  * @retval 无
  */
+ //=========================================================================================================
 static void prvLED3BlinkTask(void *pvParameters)
 {
         portTickType xNextWakeTime;
-        const portTickType xFrequency = 500;
+        const portTickType xFrequency = 100;
         xNextWakeTime = xTaskGetTickCount();
         for(;;)
         {				
@@ -54,18 +56,34 @@ static void prvLED3BlinkTask(void *pvParameters)
         }
 }
 
-/*-----------------------------------------------------------*/
 
+//=========================================================================================================
+/**
+ * @brief  测试 IO 口翻转速度与 CPU 工作频率
+ * @param  pvParameters:任务默认参数.
+ * @retval 无
+ */
+//=========================================================================================================
+static void prvPB13_ToggleTask(void *pvParameters)
+{
+	for (;;) {
+		GPIOB->ODR ^= GPIO_Pin_13;
+	}
+}	
+	
+	
+//=========================================================================================================
 /**
  * @brief  按键检测任务：每隔20ms检测按键状态。如果有按键事件则释放信号.
  * @param  pvParameters:任务默认参数.
  * @retval 无
  */
+//=========================================================================================================
 static void prvButtonCheckTask(void *pvParameters)
 {	
         static uint8_t bounce_count;
         portTickType xNextWakeTime;
-        const portTickType xFrequency = 5;
+        const portTickType xFrequency = 2;
         xNextWakeTime = xTaskGetTickCount();
 
         /* 创建信号 */
@@ -87,18 +105,19 @@ static void prvButtonCheckTask(void *pvParameters)
                                 xSemaphoreGive(xButtonSpeedUpSemaphore);//释放按键信号 
                         }
                 }
-                /* 每隔20ms检测一次 */ 
+                /* 每隔Nms检测一次 */ 
                 vTaskDelayUntil(&xNextWakeTime,xFrequency);
         }
 }
 
-/*-----------------------------------------------------------*/
 
+//=========================================================================================================
 /**
  * @brief  USART1通讯任务：发送字符串并将PC发送来的字符返回PC.
  * @param  pvParameters:任务默认参数.
  * @retval 无
  */
+//=========================================================================================================
 static void prvUsart1Task(void *pvParameters)
 {
         char ch;
@@ -114,19 +133,21 @@ static void prvUsart1Task(void *pvParameters)
 
         for( ;; )   
         {             
-                if (Usart1GetChar(&ch))         
-                {           
+                if (Usart1GetChar(&ch)) {           
                         Usart1PutChar(ch);         
                 }       
                 vTaskDelayUntil(&xLastWakeTime,xFrequency);   
         }  	
 }
 
+
+//=========================================================================================================
 /**
  * @brief  向队列发送字符.
  * @param  ch:待发送的字符.
  * @retval 无
  */
+//=========================================================================================================
 uint32_t Usart1PutChar(char ch)
 {
         if(xQueueSend(TxQueue, &ch, 10) == pdPASS)//发送字符成功
@@ -139,11 +160,14 @@ uint32_t Usart1PutChar(char ch)
         }
 }
 
+
+//=========================================================================================================
 /**
  * @brief  从队列读取字符.
  * @param  ch:从队列读取的字符.
  * @retval 无
  */
+//=========================================================================================================
 uint32_t Usart1GetChar(char *ch)
 {
         if(xQueueReceive(RxQueue, ch, 0) == pdPASS)//读取字符成功
@@ -153,12 +177,15 @@ uint32_t Usart1GetChar(char *ch)
         return pdFALSE;
 }
 
+
+//=========================================================================================================
 /**
  * @brief  向队列发送字符串数组.
  * @param  pcString: 待写入的字符串数组指针.
  * @param  u32StringLength: 待写入字符串数组长度.
  * @retval 无
  */
+//=========================================================================================================
 void  USART1PutString(const char *const pcString, uint32_t u32StringLength)
 {
         uint32_t i;
@@ -175,12 +202,13 @@ void  USART1PutString(const char *const pcString, uint32_t u32StringLength)
 }
 
 
-
+//=========================================================================================================
 /**
   * @brief  LCD任务：每隔500ms清屏并显示固定字符串“Hello World！”.
   * @param  pvParameters:任务默认参数.
   * @retval 无
   */
+//=========================================================================================================
 static void prvLCDTask(void *pvParameters)
 {
 	uint8_t lcd_row = 0;
@@ -218,6 +246,7 @@ static void prvLCDTask(void *pvParameters)
  * @param  无
  * @retval 无
  */
+//=========================================================================================================
 void prvUserTasks(void)
 {
         /* 创建任务 */
@@ -228,6 +257,13 @@ void prvUserTasks(void)
                         mainLED3_BLINK_TASK_PRIORITY,	//任务优先级 
                         NULL);				//任务句柄
 
+	xTaskCreate(prvPB13_ToggleTask,
+                        ( char *) "Port Test",
+                        configMINIMAL_STACK_SIZE,
+                        NULL,
+                        mainPORTst_TASK_PRIORITY,	
+                        NULL);
+			
         xTaskCreate(prvButtonCheckTask,
                         ( char *) "BTN CHECK",
                         configMINIMAL_STACK_SIZE,

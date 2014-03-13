@@ -1,13 +1,15 @@
-/*-----------------------------------------------------------
- * Implementation of functions defined in portable.h for the ARM CM0 port.
- *----------------------------------------------------------*/
+//=========================================================================================================
+// Implementation of functions defined in portable.h for the ARM CM0 port.
+//=========================================================================================================
 
 /* Scheduler includes. */
 #include "FreeRTOS.h"
 #include "task.h"
+#include "system_stm32f0xx.h"
 
 
-/* Constants required to manipulate the NVIC. */
+/* Constants required to manipulate the NVIC(nested vectored interrupt controller). */
+// 嵌套向量中断控制器
 #define portNVIC_SYSTICK_CTRL		( ( volatile uint32_t *) 0xe000e010 )
 #define portNVIC_SYSTICK_LOAD		( ( volatile uint32_t *) 0xe000e014 )
 #define portNVIC_INT_CTRL		( ( volatile uint32_t *) 0xe000ed04 )
@@ -87,15 +89,17 @@ static void prvTaskExitError( void )
 	portDISABLE_INTERRUPTS();
 	for( ;; );
 }
-/*-----------------------------------------------------------*/
 
+
+//=========================================================================================================
 void vPortSVCHandler( void )
 {
 	/* This function is no longer used, but retained for backward
 	compatibility. */
 }
-/*-----------------------------------------------------------*/
 
+
+//=========================================================================================================
 __asm void prvPortStartFirstTask( void )
 {
 	extern pxCurrentTCB;
@@ -120,8 +124,9 @@ __asm void prvPortStartFirstTask( void )
 
 	ALIGN
 }
-/*-----------------------------------------------------------*/
 
+
+//=========================================================================================================
 /*
  * See header file for description.
  */
@@ -144,16 +149,19 @@ BaseType_t xPortStartScheduler( void )
 	/* Should not get here! */
 	return 0;
 }
-/*-----------------------------------------------------------*/
 
+
+
+//=========================================================================================================
 void vPortEndScheduler( void )
 {
 	/* Not implemented in ports where there is nothing to return to.
 	Artificially force an assert. */
 	configASSERT( uxCriticalNesting == 1000UL );
 }
-/*-----------------------------------------------------------*/
 
+
+//=========================================================================================================
 void vPortYield( void )
 {
 	/* Set a PendSV to request a context switch. */
@@ -164,8 +172,9 @@ void vPortYield( void )
 	__dsb( portSY_FULL_READ_WRITE );
 	__isb( portSY_FULL_READ_WRITE );
 }
-/*-----------------------------------------------------------*/
 
+
+//=========================================================================================================
 void vPortEnterCritical( void )
 {
         portDISABLE_INTERRUPTS();
@@ -173,8 +182,9 @@ void vPortEnterCritical( void )
 	__dsb( portSY_FULL_READ_WRITE );
 	__isb( portSY_FULL_READ_WRITE );
 }
-/*-----------------------------------------------------------*/
 
+
+//=========================================================================================================
 void vPortExitCritical( void )
 {
 	configASSERT( uxCriticalNesting );
@@ -183,23 +193,26 @@ void vPortExitCritical( void )
                 portENABLE_INTERRUPTS();
         }
 }
-/*-----------------------------------------------------------*/
 
+
+//=========================================================================================================
 __asm uint32_t ulSetInterruptMaskFromISR( void )
 {
 	mrs r0, PRIMASK
 	cpsid i
 	bx lr
 }
-/*-----------------------------------------------------------*/
 
+
+//=========================================================================================================
 __asm void vClearInterruptMaskFromISR( uint32_t ulMask )
 {
 	msr PRIMASK, r0
 	bx lr
 }
-/*-----------------------------------------------------------*/
 
+
+//=========================================================================================================
 __asm void xPortPendSVHandler( void )
 {
 	extern vTaskSwitchContext
@@ -244,8 +257,9 @@ __asm void xPortPendSVHandler( void )
 	bx r3
 	ALIGN
 }
-/*-----------------------------------------------------------*/
 
+
+//=========================================================================================================
 void xPortSysTickHandler( void )
 {
         uint32_t ulPreviousMask;
@@ -260,8 +274,9 @@ void xPortSysTickHandler( void )
 	}
 	portCLEAR_INTERRUPT_MASK_FROM_ISR( ulPreviousMask );
 }
-/*-----------------------------------------------------------*/
 
+
+//=========================================================================================================
 /*
  * Setup the systick timer to generate the tick interrupts at the required
  * frequency.
@@ -272,5 +287,6 @@ void prvSetupTimerInterrupt( void )
 	*(portNVIC_SYSTICK_LOAD) = ( configCPU_CLOCK_HZ / configTICK_RATE_HZ ) - 1UL;
 	*(portNVIC_SYSTICK_CTRL) = portNVIC_SYSTICK_CLK | portNVIC_SYSTICK_INT | portNVIC_SYSTICK_ENABLE;
 }
-/*-----------------------------------------------------------*/
+
+//=========================================================================================================
 

@@ -777,13 +777,11 @@ void ADC_OverrunModeCmd(ADC_TypeDef* ADCx, FunctionalState NewState)
         assert_param(IS_ADC_ALL_PERIPH(ADCx));
         assert_param(IS_FUNCTIONAL_STATE(NewState));
 
-        if (NewState != DISABLE)
-        {
+        if (NewState != DISABLE) {
                 /* Enable the Overrun mode */
                 ADCx->CFGR1 |= (uint32_t)ADC_CFGR1_OVRMOD;
         }
-        else
-        {
+        else {
                 /* Disable the Overrun mode */
                 ADCx->CFGR1 &= (uint32_t)(~ADC_CFGR1_OVRMOD);
         }
@@ -807,19 +805,16 @@ uint32_t ADC_GetCalibrationFactor(ADC_TypeDef* ADCx)
         ADCx->CR |= (uint32_t)ADC_CR_ADCAL;
 
         /* Wait until no ADC calibration is completed */
-        do
-        {
+        do {
                 calibrationstatus = ADCx->CR & ADC_CR_ADCAL;
                 calibrationcounter++;  
         } while((calibrationcounter != CALIBRATION_TIMEOUT) && (calibrationstatus != 0x00));
 
-        if((uint32_t)(ADCx->CR & ADC_CR_ADCAL) == RESET)
-        {
+        if((uint32_t)(ADCx->CR & ADC_CR_ADCAL) == RESET) {
                 /*Get the calibration factor from the ADC data register */
                 tmpreg = ADCx->DR;
         }
-        else
-        {
+        else {
                 /* Error factor */
                 tmpreg = 0x00000000;
         }

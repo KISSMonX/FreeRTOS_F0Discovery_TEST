@@ -48,38 +48,29 @@ extern "C" {
          * @brief  SPI Init structure definition  
          */
 
-        typedef struct
-        {
+        typedef struct {
                 uint16_t SPI_Direction;           /*!< Specifies the SPI unidirectional or bidirectional data mode.
                                                     This parameter can be a value of @ref SPI_data_direction */
-
                 uint16_t SPI_Mode;                /*!< Specifies the SPI mode (Master/Slave).
                                                     This parameter can be a value of @ref SPI_mode */
-
                 uint16_t SPI_DataSize;            /*!< Specifies the SPI data size.
                                                     This parameter can be a value of @ref SPI_data_size */
-
                 uint16_t SPI_CPOL;                /*!< Specifies the serial clock steady state.
                                                     This parameter can be a value of @ref SPI_Clock_Polarity */
-
                 uint16_t SPI_CPHA;                /*!< Specifies the clock active edge for the bit capture.
                                                     This parameter can be a value of @ref SPI_Clock_Phase */
-
                 uint16_t SPI_NSS;                 /*!< Specifies whether the NSS signal is managed by
                                                     hardware (NSS pin) or by software using the SSI bit.
                                                     This parameter can be a value of @ref SPI_Slave_Select_management */
-
                 uint16_t SPI_BaudRatePrescaler;   /*!< Specifies the Baud Rate prescaler value which will be
                                                     used to configure the transmit and receive SCK clock.
                                                     This parameter can be a value of @ref SPI_BaudRate_Prescaler
                                                     @note The communication clock is derived from the master
                                                     clock. The slave clock does not need to be set. */
-
                 uint16_t SPI_FirstBit;            /*!< Specifies whether data transfers start from MSB or LSB bit.
-                                                    This parameter can be a value of @ref SPI_MSB_LSB_transmission */
-
+                                                   This parameter can be a value of @ref SPI_MSB_LSB_transmission */
                 uint16_t SPI_CRCPolynomial;       /*!< Specifies the polynomial used for the CRC calculation. */
-        }SPI_InitTypeDef;
+        } SPI_InitTypeDef;
 
 
         /** 
