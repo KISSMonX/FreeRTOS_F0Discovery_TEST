@@ -58,16 +58,16 @@ static void prvSetupHardware( void )
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;	// IO 口速度
 	GPIO_Init(GPIOC, &GPIO_InitStructure);			// 写入配置
 	
-	/*
-	 * 测试用 IO 口初始化
-	 * GPIOB.13 用于测试 IO 口速度和 CPU 速度
-	 */
-//	GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_13;
-//	GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_OUT;
-//	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-//	GPIO_InitStructure.GPIO_PuPd  = GPIO_PuPd_NOPULL;
-//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-//	GPIO_Init(GPIOB, &GPIO_InitStructure);
+//	/*
+//	 * 测试用 IO 口初始化
+//	 * GPIOB.14 用于测试 IO 口速度和 CPU 速度
+//	 */
+	GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_14;
+	GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_OUT;
+	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+	GPIO_InitStructure.GPIO_PuPd  = GPIO_PuPd_NOPULL;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
 	 
 	 
 	/* 

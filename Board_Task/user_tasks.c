@@ -46,12 +46,11 @@ uint8_t u8LCDFrameBuffer[LCD_X*LCD_Y/8];		// LCD 显示缓冲区
 static void prvLED3BlinkTask(void *pvParameters)
 {
         portTickType xNextWakeTime;
-        const portTickType xFrequency = 60;
+        const portTickType xFrequency = 100;
         xNextWakeTime = xTaskGetTickCount();
         for(;;)
         {				
-                STM_EVAL_LEDToggle(LED3);
-//                GPIOC->ODR ^= GPIO_Pin_9;
+                GPIOC->ODR ^= GPIO_Pin_9;
                 vTaskDelayUntil(&xNextWakeTime, xFrequency);
         }
 }
@@ -64,13 +63,13 @@ static void prvLED3BlinkTask(void *pvParameters)
  * @retval 无
  */
 //=========================================================================================================
-//static void prvPB13_ToggleTask(void *pvParameters)
-//{
-//	for (;;) {
-//		GPIOB->ODR ^= GPIO_Pin_13;
-////		vTaskDelay(1);
-//	}
-//}	
+static void prvPB13_ToggleTask(void *pvParameters)
+{
+	for (;;) {
+		GPIOB->ODR ^= GPIO_Pin_14;
+		vTaskDelay(1);
+	}
+}	
 	
 	
 //=========================================================================================================
@@ -102,7 +101,7 @@ static void prvButtonCheckTask(void *pvParameters)
                         bounce_count++;
                         if (bounce_count == DEBOUNCECOUNTS)//按键防抖
                         {	
-				STM_EVAL_LEDToggle(LED4);
+				GPIOC->ODR ^= GPIO_Pin_8;
                                 xSemaphoreGive(xButtonSpeedUpSemaphore);//释放按键信号 
                         }
                 }
@@ -279,12 +278,12 @@ void prvUserTasks(void)
 			mainLCD_TASK_PRIORITY,
 			NULL);		
 
-//	xTaskCreate(prvPB13_ToggleTask,
-//                        ( char *) "Port Test",
-//                        configMINIMAL_STACK_SIZE,
-//                        NULL,
-//                        mainPORTst_TASK_PRIORITY,	
-//                        NULL);
+	xTaskCreate(prvPB13_ToggleTask,
+                        ( char *) "Port Test",
+                        configMINIMAL_STACK_SIZE,
+                        NULL,
+                        mainPORTst_TASK_PRIORITY,	
+                        NULL);
 			
         /* 启动任务调度器 */
         vTaskStartScheduler();

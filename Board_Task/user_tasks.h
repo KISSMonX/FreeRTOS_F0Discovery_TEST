@@ -5,7 +5,6 @@
 #include "task.h"
 #include "queue.h"
 #include "semphr.h"
-#include "stm32f0_discovery.h"
 
 /*-----------------------------------------------------------*/
 
