@@ -2120,7 +2120,7 @@ void vTaskSwitchContext( void )
 
 void vTaskPlaceOnEventList( List_t * const pxEventList, const TickType_t xTicksToWait )
 {
-TickType_t xTimeToWake;
+	TickType_t xTimeToWake;
 
 	configASSERT( pxEventList );
 
@@ -2179,7 +2179,7 @@ TickType_t xTimeToWake;
 
 void vTaskPlaceOnUnorderedEventList( List_t * pxEventList, const TickType_t xItemValue, const TickType_t xTicksToWait )
 {
-TickType_t xTimeToWake;
+	TickType_t xTimeToWake;
 
 	configASSERT( pxEventList );
 
