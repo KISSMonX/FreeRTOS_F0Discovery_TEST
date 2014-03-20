@@ -101,6 +101,7 @@ static void prvButtonCheckTask(void *pvParameters)
                         bounce_count++;
                         if (bounce_count == DEBOUNCECOUNTS)//按键防抖
                         {	
+				bounce_count = 0;
 				GPIOC->ODR ^= GPIO_Pin_8;
                                 xSemaphoreGive(xButtonSpeedUpSemaphore);//释放按键信号 
                         }
